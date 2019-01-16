@@ -5,14 +5,6 @@ main = do
     values <- getLine
     putStrLn . polyformat . solver . (map (read::String->Double)) . words $ values
 
--- s1 :: String -> String -> String
--- s1 a b = if isAnagram then "A" else "N"
---     where
---         word      = sort a
---         stars     = sort b
---         starCount = length $ filter (=='*') stars
---         isAnagram = drop starCount word == drop starCount stars
-
 enumerate :: (Num a, Enum a) => [b] -> [(a, b)]
 -- transofmrs [a,b,c] into [(0,a), (1,b), (2,c)]
 enumerate = zip [0..]
