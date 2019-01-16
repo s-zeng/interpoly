@@ -3,7 +3,7 @@ import Data.List
 main :: IO ()
 main = do
     values <- getLine
-    putStrLn . polyformat . solver . (map (read::String->Double)) . words $ values
+    putStrLn . polyformat . powerfixed_solve . (map (read::String->Double)) . words $ values
 
 enumerate :: (Num a, Enum a) => [b] -> [(a, b)]
 -- transofmrs [a,b,c] into [(0,a), (1,b), (2,c)]
@@ -36,6 +36,12 @@ solver lst
   where
       deg     = degree lst
       a       = (head $ differences deg lst) / fromIntegral (factorial deg)
+
+powerfixed_solve :: (Enum a, Ord a, Fractional a) => [a] -> [a]
+powerfixed_solve lst = solution ++ replicate pad 0
+    where 
+        solution = solver lst
+        pad = (degree lst) - length solution + 1
 
 polyformat :: Show a => [a] -> String
 polyformat = (intercalate " + ") . (map poly) . reverse . enumerate . reverse . (map show)
