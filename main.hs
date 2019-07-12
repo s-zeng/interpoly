@@ -4,12 +4,13 @@ import Data.List
 -- - Terminal features
 --   - Help message
 --   - Flag handling
---   - Precision flag
+--     - Precision flag
+--     - Indexing at 0 or 1
 -- - Remove extraneous 0s
 -- - proper lagrange interpolation
 
 main :: IO ()
-main = getLine >>= (putStrLn . polyformat . powerfixed_solve . (map (read::String->Double)) . words)
+main = getLine >>= (putStrLn . polyformat . powerfixed_solve . (map (read::String->Double)) . words) >> main
 
 enumerate :: (Num a, Enum a) => [b] -> [(a, b)]
 -- transforms [a,b,c] into [(0,a), (1,b), (2,c)]
@@ -31,8 +32,8 @@ degree lst
   | is_constant lst = 0
   | otherwise       = succ . degree $ differences 1 lst
 
-factorial :: Int -> Integer
-factorial = product . flip take [1..]
+factorial :: Integer -> Integer
+factorial = product . enumFromTo 1
 
 solver :: (Enum a, Ord a, Fractional a) => [a] -> [a]
 solver lst
@@ -48,8 +49,8 @@ powerfixed_solve lst = solution ++ replicate pad 0
         solution = solver lst
         pad      = (degree lst) - length solution + 1
 
-polyformat :: Show a => [a] -> String
-polyformat = (intercalate " + ") . (map poly) . reverse . enumerate . reverse . (map show)
+polyformat :: (RealFrac a, Show a, Eq a) => [a] -> String
+polyformat = (intercalate " + ") . map poly . reverse . filter ((/= 0) . snd) . enumerate . reverse 
     where 
-        poly x = if (fst x) /= 0 then snd x ++ "x^" ++ show (fst x) else snd x
-
+        poly (deg, val) = if deg /= 0 then make_integral val ++ "x^" ++ show deg else make_integral val
+        make_integral x = if x == fromInteger (round x) then show $ round x else show x
