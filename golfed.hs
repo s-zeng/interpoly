@@ -1,5 +1,4 @@
 import Data.List
-main :: IO ()
 main=getLine>>=(putStrLn.f.p.(map(read::String->Double)).words)
 e=zip[0..]
 i(x:y)=all((< 0.1).abs.(subtract x))y
